@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "jcmarin.qrg",
+  "name": "Quick Reference Guide",
+  "version": "0.1.0",
+  "author": "jcmarin",
+  "description": "Search cheat sheets (nvim, docker, zsh, ...) from the bar and copy an entry",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Quick Reference Guide",
+    "description": "Search cheat sheets and copy keys/commands",
+    "category": "Tools",
+    "allowMultiple": false
+  }
+}

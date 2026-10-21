@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Status
 
-QRG (quick reference guide). **Phase 1 (data layer) is done**: YAML schema, starter guides (nvim, docker, zsh) and the build script. **Web front-end is a first draft** (`web/`, single Astro page, client-side search, themed from the active Omarchy theme via the generated `web/public/theme.css`; run with `cd web && npm install && npx astro dev`). `plugin/` is not started.
+QRG (quick reference guide). **Phase 1 (data layer) is done**: YAML schema, starter guides (nvim, docker, zsh) and the build script. **Web front-end is a first draft** (`web/`, single Astro page, client-side search, themed from the active Omarchy theme via the generated `web/public/theme.css`; run with `cd web && npm install && npx astro dev`). **Plugin is a first draft** (`plugin/jcmarin.qrg/`: bar button + search panel with section headers; Tab cycles guides, Enter copies keys; `omarchy-shell qrg toggle` opens it).
 
 ## Commands
 
@@ -46,7 +46,7 @@ plugin/jcmarin.qrg/   Omarchy plugin (manifest.json, BarWidget.qml, Panel.qml)
 - Both front-ends read the same generated `qrg.json`; keep lookup logic out of the UI layers. The build also writes `qrg.json` into the plugin folder.
 - Entry model: tool → sections → entries (`keys`, optional `mode` N/I/V/C, `desc`, optional `example`, `tags`). Docker/zsh entries have no modes, so `keys` is a command or shortcut.
 - **No database.** SQLite/Postgres were considered and rejected: the data is small, read-only at runtime, and filtered in memory. Only revisit if a terminal `qrg search` CLI or ranked full-text search is wanted.
-- The plugin is symlinked: `~/.config/omarchy/plugins/jcmarin.qrg` → `plugin/jcmarin.qrg` in this repo. Never edit `/usr/share/omarchy/`; plugin QML hot-reloads on save (`omarchy-shell shell rescanPlugins` forces it).
+- The plugin is symlinked: `~/.config/omarchy/plugins/jcmarin.qrg` → `plugin/jcmarin.qrg` in this repo. Never edit `/usr/share/omarchy/`; plugin QML hot-reloads on save **only for non-symlinked plugins** — because ours is a symlink, edits are not picked up; run `omarchy-restart-shell` after changing QML.
 
 These are decisions made, not yet implemented — update this file as they land.
 
