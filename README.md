@@ -15,10 +15,11 @@ A bar button for [Omarchy](https://omarchy.org) that opens a searchable cheat-sh
 
 ```sh
 omarchy plugin add https://github.com/jcmarinn/Omarchy-QRG.git --enable
-omarchy-restart-shell
 ```
 
-Open it from the new book icon in the bar, or bind a key to `omarchy-shell qrg toggle`. Requires `wl-copy` (`wl-clipboard`, included with Omarchy). Update with `omarchy plugin update jcmarin.qrg`.
+The shell loads it right away — no restart needed. Open it from the new book icon in the bar (move it with `omarchy bar move jcmarin.qrg`), or bind a key to `omarchy-shell qrg toggle`. Requires `wl-copy` (`wl-clipboard`, included with Omarchy).
+
+Update with `omarchy plugin update jcmarin.qrg`; it reloads live too, and your own guides in `~/.config/qrg/guides/` are untouched.
 
 ## Add your own guide
 
