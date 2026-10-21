@@ -37,8 +37,8 @@ Only `keys | description` are required; `[N V]` puts marks (badges) on an entry 
 
 - `node --test tests/parser.test.mjs` — run the tests (no dependencies, no build step).
 - `omarchy plugin validate .` — check the manifest.
-- **Running copy:** the plugin the shell runs is a real clone installed with `omarchy plugin add https://github.com/jcmarinn/Omarchy-QRG.git --enable`, in `~/.config/omarchy/plugins/jcmarin.qrg` — not a symlink to this checkout. To try a change: commit and push, then `omarchy plugin update jcmarin.qrg` (the shell hot-reloads the installed folder; no restart). Quick experiments can also be edited directly in the installed clone, but copy them back here and commit.
-- If you ever symlink this checkout into `~/.config/omarchy/plugins/` instead (`omarchy plugin remove` the clone first — the installer refuses a duplicate id), symlinked plugins are **not** hot-reloaded: run `omarchy-restart-shell` after QML changes.
+- **Running copy:** the plugin the shell runs is a real clone installed with `omarchy plugin add https://github.com/jcmarinn/Omarchy-QRG.git --enable`, in `~/.config/omarchy/plugins/jcmarin.qrg` — not a symlink to this checkout. To try a change: commit and push, then `omarchy plugin update jcmarin.qrg --yes` **and `omarchy-restart-shell`**.
+- **Why the restart:** Omarchy's plugin hot reload keeps running stale plugin code (QML and imported JS) — the shell's `Qt.clearComponentCache()` guard is never true on Qt 6 (known bug, omacom/omarchy#6981, still open; also #16063). It logs "Local plugin changed, reloading" and blinks the bar but loads the old code, so every code change needs `omarchy-restart-shell`, for installed clones and symlinks alike. Once that bug is fixed the restart should become unnecessary — then drop this note and the README wording. Guide data is re-read on every panel open and needs no restart.
 - Plain data changes in `guides/` or `~/.config/qrg/guides/` are picked up the next time the panel opens.
 
 ## Conventions

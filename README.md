@@ -17,9 +17,18 @@ A bar button for [Omarchy](https://omarchy.org) that opens a searchable cheat-sh
 omarchy plugin add https://github.com/jcmarinn/Omarchy-QRG.git --enable
 ```
 
-The shell loads it right away — no restart needed. Open it from the new book icon in the bar (move it with `omarchy bar move jcmarin.qrg`), or bind a key to `omarchy-shell qrg toggle`. Requires `wl-copy` (`wl-clipboard`, included with Omarchy).
+The shell should load it right away. Open it from the new book icon in the bar (move it with `omarchy bar move jcmarin.qrg`), or bind a key to `omarchy-shell qrg toggle`. Requires `wl-copy` (`wl-clipboard`, included with Omarchy).
 
-Update with `omarchy plugin update jcmarin.qrg`; it reloads live too, and your own guides in `~/.config/qrg/guides/` are untouched.
+If the bar button doesn't appear or `omarchy-shell qrg toggle` says the target isn't found, run `omarchy-restart-shell`. Omarchy's plugin hot reload is currently unreliable for bar widgets (see the open issue below), so a restart is the fallback.
+
+### Updating
+
+```sh
+omarchy plugin update jcmarin.qrg
+omarchy-restart-shell
+```
+
+The restart is needed **only because of a bug in Omarchy**, not because of anything in this plugin: after a plugin's files change, the shell logs "Local plugin changed, reloading" but keeps running the old code until it is restarted ([omarchy#6981](https://github.com/omacom/omarchy/issues/6981), still open; see also [#16063](https://github.com/omacom/omarchy/issues/16063)). We expect the restart to become unnecessary once that is fixed. Until then, if you skip it you will keep seeing the previous version. Your own guides in `~/.config/qrg/guides/` are never touched by an update.
 
 ## Add your own guide
 
@@ -76,7 +85,7 @@ node --test tests/parser.test.mjs     # parser + search tests
 omarchy plugin validate .             # manifest check
 ```
 
-If you symlink a working copy into `~/.config/omarchy/plugins/jcmarin.qrg`, QML edits are not hot-reloaded — run `omarchy-restart-shell`.
+Changes to the plugin's own code (`Panel.qml`, `QrgSearch.js`, …) need `omarchy-restart-shell` to take effect, whether you edit an installed clone, symlink a working copy into `~/.config/omarchy/plugins/jcmarin.qrg`, or run `omarchy plugin update` — the same Omarchy hot-reload bug ([omarchy#6981](https://github.com/omacom/omarchy/issues/6981)). Guide files (`guides/*.txt` and `~/.config/qrg/guides/`) are re-read every time the panel opens and need no restart.
 
 There is also a web version of the same guides: [QRG-web](https://github.com/jcmarinn/QRG-web).
 
