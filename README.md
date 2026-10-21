@@ -30,6 +30,22 @@ omarchy-restart-shell
 
 The restart is needed **only because of a bug in Omarchy**, not because of anything in this plugin: after a plugin's files change, the shell logs "Local plugin changed, reloading" but keeps running the old code until it is restarted ([omarchy#6981](https://github.com/omacom/omarchy/issues/6981), still open; see also [#16063](https://github.com/omacom/omarchy/issues/16063)). We expect the restart to become unnecessary once that is fixed. Until then, if you skip it you will keep seeing the previous version. Your own guides in `~/.config/qrg/guides/` are never touched by an update.
 
+## Requirements
+
+- Omarchy (Hyprland + Quickshell) — the plugin is a bar widget for the Omarchy shell.
+- `wl-copy` from `wl-clipboard` (included with Omarchy) — used to copy the selected entry.
+- `omarchy-launch-editor` (part of Omarchy) — only used by `omarchy-shell qrg newGuide` to open a new guide in your editor.
+
+Nothing else is installed, no network access is used, and the plugin never edits your Omarchy configuration. It only writes to `~/.config/qrg/guides/` when you run `newGuide`, and it never overwrites an existing file there.
+
+## Uninstall
+
+```sh
+omarchy plugin remove jcmarin.qrg
+```
+
+It asks for confirmation (add `--yes` to skip it), disables the plugin and deletes its folder from `~/.config/omarchy/plugins/` (the repo itself stays on GitHub). If the book icon is still in the bar afterwards, run `omarchy-restart-shell`. Your own guides are not removed: delete `~/.config/qrg/` if you want them gone too.
+
 ## Add your own guide
 
 Run:
