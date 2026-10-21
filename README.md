@@ -6,6 +6,11 @@ A bar button for [Omarchy](https://omarchy.org) that opens a searchable cheat-sh
 - Hover a row for its example.
 - Colors follow your Omarchy theme.
 
+<p align="center">
+  <img src="preview/preview.png" alt="Neovim guide in the panel" width="400"/>
+  <img src="preview/preview_search.png" alt="Searching across all guides" width="400"/>
+</p>
+
 ## Install
 
 ```sh
