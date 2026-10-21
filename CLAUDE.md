@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Status
 
-QRG (quick reference guide). **Phase 1 (data layer) is done**: YAML schema, starter guides (nvim, docker, zsh) and the build script. **Web front-end is a first draft** (`web/`, single Astro page, client-side search, themed from the active Omarchy theme via the generated `web/public/theme.css`; run with `cd web && npm install && npx astro dev`). **Plugin is a first draft** (`plugin/jcmarin.qrg/`: bar button + search panel with section headers; Tab cycles guides, Enter copies keys; `omarchy-shell qrg toggle` opens it).
+QRG (quick reference guide). **Phase 1 (data layer) is done**: YAML schema, starter guides (nvim, docker, zsh) and the build script. **Web front-end is a first draft** (`web/`, single Astro page, client-side search, themed from the active Omarchy theme via the generated `web/public/theme.css`; runs as the user service `qrg-web` at http://127.0.0.1:4321 — unit in `systemd/qrg-web.service`, installed with `systemctl --user enable --now $PWD/systemd/qrg-web.service`; manage with `systemctl --user restart|status qrg-web`, logs via `journalctl --user -u qrg-web`; needs `cd web && npm install` once). **Plugin is a first draft** (`plugin/jcmarin.qrg/`: bar button + search panel with section headers; Tab cycles guides, Enter copies keys; `omarchy-shell qrg toggle` opens it).
 
 ## Commands
 
