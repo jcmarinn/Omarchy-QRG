@@ -32,6 +32,17 @@ test("pipes without surrounding spaces stay inside keys", () => {
   assert.equal(tool.sections[0].entries[0].keys, "alias -g G='| grep'");
 });
 
+test("a line without ' | ' falls back to splitting on any pipe", () => {
+  const { tool, warnings } = parseGuide("## S\nkey| does something|example|#tag\n", "x");
+  assert.deepEqual(warnings, []);
+  assert.deepEqual(tool.sections[0].entries[0], { keys: "key", mode: [], desc: "does something", example: "example", tags: ["tag"] });
+});
+
+test("an extra field that looks like tags explains the tag syntax", () => {
+  const { warnings } = parseGuide("## S\nk | d | ex | # nope\n", "x", "x.txt");
+  assert.match(warnings[0], /^x\.txt:2 extra field ignored \(tags are written #word/);
+});
+
 test("comments and blank lines are ignored; name defaults to the file id", () => {
   const { tool, warnings } = parseGuide("// note\n\n## S\n// another\nk | d\n", "tmux");
   assert.deepEqual(warnings, []);

@@ -5,7 +5,7 @@
 //   # Name                       guide title (the id is the file name)
 //   One-line description         optional, before the first section
 //   ## Section title
-//   [N V] keys | description | example | #tag #tag
+//   [N V] keys | description | example | #tag #tag     (spaces around each |)
 //   // comment
 // Only keys and description are required; "[N V]" lists modes (N I V C) and a
 // field made only of #words is read as tags.
@@ -54,9 +54,13 @@ function parseGuide(text, id, file) {
       modes = m[1].split(/[\s,]+/).filter(function(x) { return x })
       body = m[2]
     }
-    var f = body.split(" | ").map(function(x) { return x.trim() })
+    // " | " (spaces around the pipe) is the separator, so keys may contain a bare "|".
+    // A line with no such separator falls back to splitting on any "|".
+    var f = body.split(" | ")
+    if (f.length < 2) f = body.split("|")
+    f = f.map(function(x) { return x.trim() })
     if (f.length < 2 || !f[0] || !f[1]) {
-      warn(n, "needs 'keys | description'")
+      warn(n, "needs 'keys | description' (a | between them)")
       continue
     }
     var entry = { keys: f[0], mode: modes, desc: f[1], tags: [] }
@@ -64,7 +68,7 @@ function parseGuide(text, id, file) {
       if (!f[k]) continue
       if (/^#\S+(\s+#\S+)*$/.test(f[k])) entry.tags = f[k].split(/\s+/).map(function(t) { return t.slice(1) })
       else if (entry.example === undefined) entry.example = f[k]
-      else warn(n, "extra field ignored")
+      else warn(n, "extra field ignored" + (f[k].charAt(0) === "#" ? " (tags are written #word #word, no space after #)" : ""))
     }
     section.entries.push(entry)
   }
