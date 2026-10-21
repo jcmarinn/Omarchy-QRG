@@ -111,7 +111,7 @@ try {
     bg: c.background, "bg-dark": c.darker_background, panel: c.dark_background, "panel-hi": c.lighter_background,
     line: c.muted, fg: c.bright_foreground, dim: c.foreground, accent: c.bright_blue, "accent-fill": c.accent,
     N: c.green, I: c.yellow, C: c.cyan, danger: c.red,
-    t1: c.bright_blue, t2: c.green, t3: c.yellow, t5: c.cyan, t6: c.bright_magenta,
+    t1: c.orange, t2: c.green, t3: c.yellow, t5: c.cyan, t6: c.bright_magenta,
   };
   const css = Object.entries(vars).filter(([, v]) => v).map(([k, v]) => `  --${k}: ${v};`).join("\n");
   await writeFile(themeCss, `:root {\n${css}\n}\n`);

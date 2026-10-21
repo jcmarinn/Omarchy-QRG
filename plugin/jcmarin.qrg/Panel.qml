@@ -29,7 +29,7 @@ Panel {
   property var rows: []
   property var results: []
   property var display: []        // results with section header rows interleaved
-  readonly property var titleColors: ["#5596ff", "#a6e3a1", "#ffca55", "#ff9e64", "#25ffdb", "#cba6f7"]
+  readonly property var titleColors: ["#ff6f96", "#a6e3a1", "#ffca55", "#ff9e64", "#25ffdb", "#cba6f7"]
   property string filterText: ""
   property string toolId: ""      // "" = all guides
   property int selectedIndex: 0
@@ -38,19 +38,21 @@ Panel {
 
   function rebuild() {
     results = QrgSearch.filter(rows, filterText, toolId, 300)
-    var out = [], last = null, n = 0
+    var out = [], last = null, n = 0, stripe = 0
     for (var i = 0; i < results.length; i++) {
       var r = results[i]
       var group = toolId ? r.section : r.tool + " · " + r.section
       if (group !== last) {
         out.push({ header: true, title: group, color: titleColors[n++ % titleColors.length] })
         last = group
+        stripe = 0
       }
-      out.push(r)
+      out.push({ keys: r.keys, desc: r.desc, example: r.example, modes: r.modes, stripe: stripe++ % 2 === 1 })
     }
     display = out
     selectedIndex = out.length > 0 ? 1 : 0   // first entry sits right after the first header
-    list.positionViewAtIndex(0, ListView.Beginning)
+    // Deferred so it runs after the ListView has taken the new model.
+    Qt.callLater(function() { list.positionViewAtBeginning() })
   }
 
   function setFilter(text) { filterText = text; selectedIndex = 0; rebuild() }
@@ -208,12 +210,13 @@ Panel {
           required property int index
           required property var modelData
           readonly property bool isHeader: modelData.header === true
+          property bool tipReady: false   // set by hoverTimer so the tooltip really waits
           readonly property bool current: !isHeader && index === root.selectedIndex
 
           width: ListView.view.width
           height: isHeader ? headerText.implicitHeight + Style.space(14) : rowColumn.implicitHeight + Style.space(10)
           radius: Style.cornerRadius
-          color: current ? root.selectedBg : "transparent"
+          color: current ? root.selectedBg : (!isHeader && modelData.stripe ? Util.alpha(root.fg, 0.045) : "transparent")
 
           Text {
             id: headerText
@@ -292,27 +295,34 @@ Panel {
                 }
               }
             }
-
-            Text {
-              visible: row.current && row.modelData.example !== ""
-              width: parent.width
-              text: row.isHeader ? "" : row.modelData.example
-              textFormat: Text.PlainText
-              color: root.fg
-              opacity: 0.65
-              font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
-              wrapMode: Text.WordWrap
-            }
           }
 
           MouseArea {
+            id: rowMouse
             anchors.fill: parent
             enabled: !row.isHeader
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onContainsMouseChanged: if (containsMouse) root.selectedIndex = row.index
+            onContainsMouseChanged: {
+              if (containsMouse) root.selectedIndex = row.index
+              else row.tipReady = false
+            }
             onClicked: root.copy(row.index)
+          }
+
+          Timer {
+            id: hoverTimer
+            interval: 600
+            running: rowMouse.containsMouse
+            onTriggered: row.tipReady = true
+          }
+
+          // Only the extra text shows: the example, or the full keys when they are elided and there is no example.
+          PanelToolTip {
+            visible: row.tipReady && rowMouse.containsMouse && !row.isHeader && (row.modelData.example !== "" || keysText.truncated)
+            delay: 0
+            text: row.isHeader ? "" : (row.modelData.example !== "" ? row.modelData.example : row.modelData.keys)
+            fontFamily: root.fontFamily
           }
         }
       }
