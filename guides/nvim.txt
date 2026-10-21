@@ -1,5 +1,6 @@
 # Neovim
 Modal editing keys and commands.
+@legend N=Normal, I=Insert, V=Visual, C=Command
 
 ## Motions
 [N V] h j k l | ← ↓ ↑ → | #move

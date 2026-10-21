@@ -39,8 +39,10 @@ Terminal multiplexer
 tmux new -s <name>      | New session
 tmux attach -t <name>   | Attach           | tmux a -t work works too | #session
 
+@legend T=Tab, P=Pane
+
 ## Panes
-[N] Ctrl-b %            | Split │
+[P] Ctrl-b %            | Split │
 ```
 
 | Part | Meaning |
@@ -51,7 +53,8 @@ tmux attach -t <name>   | Attach           | tmux a -t work works too | #session
 | `keys \| description` | An entry — both required |
 | third field | Example, shown in the hover tooltip |
 | `#word #word` | Search tags (as the last field) |
-| `[N V]` before the keys | Mode badges for modal tools (`N` `I` `V` `C`) |
+| `[T P]` before the keys | Marks (badges) on the entry — any single letters, e.g. editor modes or tmux panes (the built-in Neovim guide uses `N` `I` `V` `C`) |
+| `@legend T=Tab, P=Pane` | Optional: names the mark letters. The panel shows a legend of the named marks the selected guide uses. Unnamed letters still get a badge, just no legend entry |
 | `// text` | Comment |
 
 Save the file and reopen the panel — no restart or build step. If a line is malformed, the panel shows a warning with the file and line number and skips just that line.

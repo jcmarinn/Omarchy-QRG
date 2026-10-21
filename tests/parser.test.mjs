@@ -7,9 +7,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const { parseGuide, parseBundle, flatten, filter } = createRequire(import.meta.url)(join(root, "QrgSearch.js"));
+const { markColor, parseGuide, parseBundle, legendFor, flatten, filter } = createRequire(import.meta.url)(join(root, "QrgSearch.js"));
 
-test("parses modes, example and tags", () => {
+test("parses marks, example and tags", () => {
   const { tool, warnings } = parseGuide(
     "# Demo\nA demo guide\n\n## Moves\n[N V] w | Next word | w jumps forward | #move #word\nplain | Plain entry\n",
     "demo"
@@ -17,8 +17,8 @@ test("parses modes, example and tags", () => {
   assert.deepEqual(warnings, []);
   assert.equal(tool.name, "Demo");
   assert.equal(tool.description, "A demo guide");
-  assert.deepEqual(tool.sections[0].entries[0], { keys: "w", mode: ["N", "V"], desc: "Next word", example: "w jumps forward", tags: ["move", "word"] });
-  assert.deepEqual(tool.sections[0].entries[1], { keys: "plain", mode: [], desc: "Plain entry", tags: [] });
+  assert.deepEqual(tool.sections[0].entries[0], { keys: "w", marks: ["N", "V"], desc: "Next word", example: "w jumps forward", tags: ["move", "word"] });
+  assert.deepEqual(tool.sections[0].entries[1], { keys: "plain", marks: [], desc: "Plain entry", tags: [] });
 });
 
 test("tags may follow the description directly", () => {
@@ -35,7 +35,7 @@ test("pipes without surrounding spaces stay inside keys", () => {
 test("a line without ' | ' falls back to splitting on any pipe", () => {
   const { tool, warnings } = parseGuide("## S\nkey| does something|example|#tag\n", "x");
   assert.deepEqual(warnings, []);
-  assert.deepEqual(tool.sections[0].entries[0], { keys: "key", mode: [], desc: "does something", example: "example", tags: ["tag"] });
+  assert.deepEqual(tool.sections[0].entries[0], { keys: "key", marks: [], desc: "does something", example: "example", tags: ["tag"] });
 });
 
 test("an extra field that looks like tags explains the tag syntax", () => {
@@ -58,6 +58,39 @@ test("bad lines warn with file and line number but do not drop the guide", () =>
 test("warning line numbers inside a bundle match the file", () => {
   const { warnings } = parseBundle("\n@@FILE /u/x.txt\n## S\nbad line\nk | d\n");
   assert.match(warnings[0], /^x\.txt:2 /);
+});
+
+test("marks can be any single letters", () => {
+  const { tool, warnings } = parseGuide("## S\n[T P] ctrl-b c | New window\n[x] k | d\n", "tmux");
+  assert.deepEqual(warnings, []);
+  assert.deepEqual(tool.sections[0].entries[0].marks, ["T", "P"]);
+  assert.deepEqual(tool.sections[0].entries[1].marks, ["x"]);
+});
+
+test("a bracketed word in the keys is not mistaken for marks", () => {
+  const { tool } = parseGuide("## S\n[count] G | Go to line\n", "x");
+  assert.equal(tool.sections[0].entries[0].keys, "[count] G");
+  assert.deepEqual(tool.sections[0].entries[0].marks, []);
+});
+
+test("@legend names the letters; bad definitions warn", () => {
+  const { tool, warnings } = parseGuide("# T\n@legend T=Tab, P=Pane mode, oops\n## S\n[T] k | d\n", "t", "t.txt");
+  assert.deepEqual(tool.legend, { T: "Tab", P: "Pane mode" });
+  assert.match(warnings[0], /^t\.txt:2 bad legend definition 'oops'/);
+});
+
+test("the legend lists only used, named marks for the selected guide", () => {
+  const a = parseGuide("@legend N=Normal, V=Visual, X=Unused\n## S\n[N V] k | d\n[Z] z | no name\n", "a").tool;
+  const b = parseGuide("@legend N=Nav\n## S\n[N] k | d\n", "b").tool;
+  assert.deepEqual(legendFor([a, b], "a"), [{ mark: "N", label: "Normal" }, { mark: "V", label: "Visual" }]);
+  assert.deepEqual(legendFor([a, b], "b"), [{ mark: "N", label: "Nav" }]);
+  assert.deepEqual(legendFor([a, b], ""), [{ mark: "N", label: "Normal / Nav" }, { mark: "V", label: "Visual" }]);
+});
+
+test("markColor keeps N/I/V/C fixed and is stable for other letters", () => {
+  assert.equal(markColor("N"), "#a6e3a1");
+  assert.equal(markColor("T"), markColor("T"));
+  assert.match(markColor("T"), /^#[0-9a-f]{6}$/);
 });
 
 test("a file without entries is skipped with a warning", () => {

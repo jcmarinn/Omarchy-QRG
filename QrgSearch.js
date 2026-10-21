@@ -4,13 +4,23 @@
 // Guide file format (guides/<id>.txt):
 //   # Name                       guide title (the id is the file name)
 //   One-line description         optional, before the first section
+//   @legend N=Normal, I=Insert   optional: names for the mark letters used below
 //   ## Section title
 //   [N V] keys | description | example | #tag #tag     (spaces around each |)
 //   // comment
-// Only keys and description are required; "[N V]" lists modes (N I V C) and a
-// field made only of #words is read as tags.
+// Only keys and description are required; "[N V]" puts marks (badges) on an
+// entry — any single letters, e.g. editor modes or tmux panes; "@legend" names
+// them for the legend — and a field made only of
+// #words is read as tags.
 
-var MODES = ["N", "I", "V", "C"]
+// Marks N/I/V/C keep fixed colors; any other letter gets one from the palette.
+var MARK_COLORS = { N: "#a6e3a1", I: "#ffca55", V: "#ff9e64", C: "#25ffdb" }
+var MARK_PALETTE = ["#ff6f96", "#cba6f7", "#89b4fa", "#f9e2af", "#94e2d5", "#fab387", "#f5c2e7", "#b4befe"]
+
+function markColor(letter) {
+  if (MARK_COLORS[letter]) return MARK_COLORS[letter]
+  return MARK_PALETTE[String(letter).charCodeAt(0) % MARK_PALETTE.length]
+}
 
 function titleCase(id) {
   return id.charAt(0).toUpperCase() + id.slice(1)
@@ -23,7 +33,7 @@ function parseGuide(text, id, file) {
   var where = file || id
   function warn(n, msg) { warnings.push(where + ":" + n + " " + msg) }
 
-  var tool = { id: id, name: titleCase(id), sections: [] }
+  var tool = { id: id, name: titleCase(id), legend: {}, sections: [] }
   var section = null
   var lines = String(text || "").split(/\r?\n/)
 
@@ -33,6 +43,15 @@ function parseGuide(text, id, file) {
     if (!line.trim() || /^\s*\/\//.test(line)) continue
 
     var m
+    if ((m = /^@legend\s+(.+)$/.exec(line.trim()))) {
+      m[1].split(",").forEach(function(def) {
+        if (!def.trim()) return
+        var p = /^\s*([A-Za-z])\s*=\s*(.+?)\s*$/.exec(def)
+        if (p) tool.legend[p[1]] = p[2]
+        else warn(n, "bad legend definition '" + def.trim() + "' (use X=Name, Y=Name)")
+      })
+      continue
+    }
     if ((m = /^##\s+(.+)$/.exec(line))) {
       section = { name: m[1].trim(), entries: [] }
       tool.sections.push(section)
@@ -48,11 +67,15 @@ function parseGuide(text, id, file) {
       continue
     }
 
-    var modes = []
+    var marks = []
     var body = line.trim()
-    if ((m = /^\[([NIVC ,]+)\]\s+(.*)$/.exec(body))) {
-      modes = m[1].split(/[\s,]+/).filter(function(x) { return x })
-      body = m[2]
+    // "[N V] keys": every token must be a single letter, so keys like "[count]" are left alone.
+    if ((m = /^\[([A-Za-z ,]+)\]\s+(.*)$/.exec(body))) {
+      var letters = m[1].split(/[\s,]+/).filter(function(x) { return x })
+      if (letters.length && letters.every(function(x) { return x.length === 1 })) {
+        marks = letters
+        body = m[2]
+      }
     }
     // " | " (spaces around the pipe) is the separator, so keys may contain a bare "|".
     // A line with no such separator falls back to splitting on any "|".
@@ -63,7 +86,7 @@ function parseGuide(text, id, file) {
       warn(n, "needs 'keys | description' (a | between them)")
       continue
     }
-    var entry = { keys: f[0], mode: modes, desc: f[1], tags: [] }
+    var entry = { keys: f[0], marks: marks, desc: f[1], tags: [] }
     for (var k = 2; k < f.length; k++) {
       if (!f[k]) continue
       if (/^#\S+(\s+#\S+)*$/.test(f[k])) entry.tags = f[k].split(/\s+/).map(function(t) { return t.slice(1) })
@@ -104,6 +127,28 @@ function parseBundle(raw) {
   return { tools: tools, warnings: warnings }
 }
 
+// Legend for the guide(s) in scope: the marks actually used by entries that the
+// guide(s) named with "@legend". Same letter named differently in two guides
+// shows both names. Unnamed marks only appear as badges, not in the legend.
+function legendFor(tools, toolId) {
+  var scope = tools.filter(function(t) { return !toolId || t.id === toolId })
+  var used = {}
+  scope.forEach(function(t) {
+    t.sections.forEach(function(s) {
+      s.entries.forEach(function(e) { e.marks.forEach(function(m) { used[m] = true }) })
+    })
+  })
+  var order = [], names = {}
+  scope.forEach(function(t) {
+    Object.keys(t.legend || {}).forEach(function(m) {
+      if (!used[m]) return
+      if (!names[m]) { names[m] = []; order.push(m) }
+      if (names[m].indexOf(t.legend[m]) < 0) names[m].push(t.legend[m])
+    })
+  })
+  return order.map(function(m) { return { mark: m, label: names[m].join(" / ") } })
+}
+
 function flatten(tools) {
   var rows = []
   for (var i = 0; i < tools.length; i++) {
@@ -119,8 +164,8 @@ function flatten(tools) {
           keys: e.keys,
           desc: e.desc,
           example: e.example || "",
-          modes: e.mode || [],
-          hay: [t.name, s.name, e.keys, e.desc, e.example || "", (e.tags || []).join(" "), (e.mode || []).join(" ")].join(" ").toLowerCase()
+          marks: e.marks || [],
+          hay: [t.name, s.name, e.keys, e.desc, e.example || "", (e.tags || []).join(" "), (e.marks || []).join(" ")].join(" ").toLowerCase()
         })
       }
     }
@@ -148,5 +193,5 @@ function filter(rows, query, toolId, limit) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { MODES: MODES, parseGuide: parseGuide, parseBundle: parseBundle, flatten: flatten, filter: filter }
+  module.exports = { markColor: markColor, parseGuide: parseGuide, parseBundle: parseBundle, legendFor: legendFor, flatten: flatten, filter: filter }
 }

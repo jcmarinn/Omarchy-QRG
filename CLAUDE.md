@@ -25,12 +25,13 @@ tests/            node:test suite for the parser
 # Name
 optional one-line description
 
+@legend N=Normal, V=Visual
 ## Section
 [N V] keys | description | optional example | #tag #tag
 // comment
 ```
 
-Only `keys | description` are required; `[N V]` modes are N/I/V/C; a field made only of `#words` is tags; the splitter is the literal ` | ` (space-pipe-space), so keys may contain a bare `|`. Users add guides in `~/.config/qrg/guides/`; a user file with the same id replaces the bundled one. Parsing never throws — bad lines become warnings shown in the panel.
+Only `keys | description` are required; `[N V]` puts marks (badges) on an entry — any single letters (editor modes, tmux panes, …), named for the legend by an optional `@legend X=Name, Y=Name` line (legend lists only named marks the shown guide uses; `QrgSearch.legendFor`; colors from `QrgSearch.markColor`: N/I/V/C fixed, other letters from a palette); a field made only of `#words` is tags; the splitter is the literal ` | ` (space-pipe-space), so keys may contain a bare `|`. Users add guides in `~/.config/qrg/guides/`; a user file with the same id replaces the bundled one. Parsing never throws — bad lines become warnings shown in the panel.
 
 ## Commands
 

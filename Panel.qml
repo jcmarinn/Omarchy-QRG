@@ -23,9 +23,9 @@ Panel {
   readonly property color fg: bar ? bar.foreground : Color.foreground
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
   readonly property color selectedBg: Util.alpha(fg, 0.1)
-  readonly property var modeColors: ({ N: "#a6e3a1", I: "#ffca55", V: "#ff9e64", C: "#25ffdb" })
 
   property var tools: []
+  property var legend: []         // [{ mark, label }] for the marks the shown guide(s) use and name
   property var warnings: []       // problems found while parsing guide files
   readonly property string bundledDir: Qt.resolvedUrl("guides").toString().replace("file://", "")
   readonly property string userDir: (Quickshell.env("XDG_CONFIG_HOME") || (Quickshell.env("HOME") + "/.config")) + "/qrg/guides"
@@ -41,6 +41,7 @@ Panel {
 
   function rebuild() {
     results = QrgSearch.filter(rows, filterText, toolId, 300)
+    legend = QrgSearch.legendFor(tools, toolId)
     var out = [], last = null, n = 0, stripe = 0
     for (var i = 0; i < results.length; i++) {
       var r = results[i]
@@ -50,7 +51,7 @@ Panel {
         last = group
         stripe = 0
       }
-      out.push({ keys: r.keys, desc: r.desc, example: r.example, modes: r.modes, stripe: stripe++ % 2 === 1 })
+      out.push({ keys: r.keys, desc: r.desc, example: r.example, marks: r.marks, stripe: stripe++ % 2 === 1 })
     }
     display = out
     selectedIndex = out.length > 0 ? 1 : 0   // first entry sits right after the first header
@@ -109,7 +110,7 @@ Panel {
     if (!id) return
     var title = id.charAt(0).toUpperCase() + id.slice(1)
     Quickshell.execDetached(["sh", "-c",
-      'mkdir -p "$1" && { [ -e "$2" ] || printf "# %s\\nShort description\\n\\n## Section\\nkeys | what it does | optional example | #tag\\n// Lines starting with // are comments. Put [N V] before the keys to show modes.\\n" "$3" > "$2"; }; omarchy-launch-editor "$2"',
+      'mkdir -p "$1" && { [ -e "$2" ] || printf "# %s\\nShort description\\n\\n## Section\\nkeys | what it does | optional example | #tag\\n// Lines starting with // are comments. Put [N V] before the keys to add marks and name them with a line like: @legend N=Normal, V=Visual\\n" "$3" > "$2"; }; omarchy-launch-editor "$2"',
       "sh", userDir, userDir + "/" + id + ".txt", title])
   }
 
@@ -223,6 +224,47 @@ Panel {
         }
       }
 
+      Flow {
+        visible: root.legend.length > 0
+        width: parent.width
+        spacing: Style.space(14)
+
+        Repeater {
+          model: root.legend
+          delegate: Row {
+            id: legendItem
+            required property var modelData
+            spacing: Style.space(5)
+
+            Rectangle {
+              width: Style.space(16)
+              height: Style.space(16)
+              radius: Style.space(3)
+              color: QrgSearch.markColor(legendItem.modelData.mark)
+
+              Text {
+                anchors.centerIn: parent
+                text: legendItem.modelData.mark
+                color: Color.background
+                font.family: root.fontFamily
+                font.pixelSize: Style.font.caption
+                font.bold: true
+              }
+            }
+
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              text: legendItem.modelData.label
+              textFormat: Text.PlainText
+              color: root.fg
+              opacity: 0.7
+              font.family: root.fontFamily
+              font.pixelSize: Style.font.caption
+            }
+          }
+        }
+      }
+
       Text {
         visible: root.warnings.length > 0
         width: parent.width
@@ -298,7 +340,7 @@ Panel {
               }
 
               Text {
-                width: parent.width - keysText.width - modeRow.width - parent.spacing * 2
+                width: parent.width - keysText.width - markRow.width - parent.spacing * 2
                 text: row.isHeader ? "" : row.modelData.desc
                 textFormat: Text.PlainText
                 color: root.fg
@@ -308,17 +350,17 @@ Panel {
               }
 
               Row {
-                id: modeRow
+                id: markRow
                 spacing: Style.space(3)
 
                 Repeater {
-                  model: row.isHeader ? [] : row.modelData.modes
+                  model: row.isHeader ? [] : row.modelData.marks
                   delegate: Rectangle {
                     required property string modelData
                     width: Style.space(16)
                     height: Style.space(16)
                     radius: Style.space(3)
-                    color: root.modeColors[modelData] || root.fg
+                    color: QrgSearch.markColor(modelData)
 
                     Text {
                       anchors.centerIn: parent
