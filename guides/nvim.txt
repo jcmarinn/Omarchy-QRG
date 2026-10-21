@@ -1,0 +1,65 @@
+# Neovim
+Modal editing keys and commands.
+
+## Motions
+[N V] h j k l | ← ↓ ↑ → | #move
+[N V] w | Jump → next word | #move #word
+[N V] b | Jump ← prev word | #move #word
+[N V] e | Jump → word end | #move #word
+[N V] 0 | Line start | #move #line
+[N V] ^ | Line start (non-blank) | #move #line
+[N V] $ | Line end | #move #line
+[N V] gg | File start | #move #file
+[N V] G | File end | 42G goes to line 42 | #move #file
+[N V] % | Matching bracket | #move #bracket
+[N V] { } | ← ¶ / ¶ → (paragraph) | #move
+[N V] f{char} | Jump → char | fx jumps to the next x; ; repeats | #move #find
+[N V] Ctrl-d / Ctrl-u | Page ↓ / ↑ (half) | #scroll
+
+## Editing
+[N] i / a | Insert / Append | #insert
+[N] I / A | Insert line start / end | #insert
+[N] o / O | New line ↓ / ↑ | #insert #line
+[N V] x | Delete char | #delete
+[N] dd | Delete line | #delete #line
+[N] yy | Copy line | #yank #copy #line
+[N] p / P | Paste ↓ / ↑ | #paste
+[N] cw | Change word | #change #word
+[N] ciw | Change inner word | ci" changes the text inside quotes | #change #textobject
+[N] u | Undo | #undo
+[N] Ctrl-r | Redo | #undo
+[N] . | Repeat change | #repeat
+[N] >> / << | Indent / Unindent | #indent
+[I C] Ctrl-w | Delete word ← | #delete #word
+[I C] Ctrl-r {reg} | Insert register | Ctrl-r 0 pastes the last copy | #register #paste
+
+## Visual
+[N] v | Visual (char) | #visual
+[N] V | Visual (line) | #visual
+[N] Ctrl-v | Visual (block) | Ctrl-v, select lines, I, type, Esc inserts on every line | #visual #block
+[V] o | Other end of selection | #visual
+[N] gv | Reselect last | #visual
+
+## Search & Replace
+[N] /pattern | Search ↓ | #search
+[N] ?pattern | Search ↑ | #search
+[N] n / N | Next / Prev match | #search
+[N] * | Search word under cursor | #search
+[C] :%s/old/new/g | Replace all | :%s/foo/bar/gc confirms each replacement | #replace
+[C] :noh | Clear highlight | #search
+
+## Files & Windows
+[C] :w | Save | #file
+[C] :q | Quit | #file
+[C] :wq | Save + quit | #file
+[C] :q! | Quit, discard | #file
+[C] :e {file} | Open file | #file
+[C] :sp / :vsp | Split ─ / │ | #window
+[N] Ctrl-w h/j/k/l | Focus window ← ↓ ↑ → | #window
+[C] :bn / :bp | Buffer → / ← | #buffer
+
+## Macros & Registers
+[N] q{reg} | Record macro | qa ... q records into a | #macro
+[N] @{reg} | Play macro | @a, then @@ to repeat; 10@a runs it 10 times | #macro
+[N V] "{reg}y | Copy → register | "ayy copies the line into register a | #register #yank #copy
+[N V] "+y | Copy → clipboard | #register #yank #copy #clipboard

@@ -1,3 +1,0 @@
-#!/bin/sh
-# After a pull/merge, regenerate qrg.json so the web page and plugin see the new guides.
-exec "$(dirname "$0")/build.sh"

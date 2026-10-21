@@ -1,0 +1,46 @@
+# Docker
+Container, image, volume and compose commands.
+
+## Containers
+docker run -d --name web -p 8080:80 nginx | Run detached + port | #run
+docker run -it --rm ubuntu bash | Run interactive, auto-remove | #run #interactive
+docker ps | List running | docker ps -a includes stopped ones | #list
+docker stop <container> | Stop | #lifecycle
+docker start <container> | Start | #lifecycle
+docker rm <container> | Remove | docker rm -f forces removal of a running one | #lifecycle
+docker exec -it <container> sh | Shell into container | #exec #interactive
+docker logs -f <container> | Follow logs | docker logs --tail 100 -f web | #logs
+docker inspect <container> | Inspect (JSON) | #inspect
+docker stats | Live resource usage | #monitor
+docker cp <container>:/path ./path | Copy host ↔ container | #files
+
+## Images
+docker images | List images | #list
+docker pull <image>:<tag> | Pull | #registry
+docker build -t name:tag . | Build | #build
+docker tag <image> <repo>:<tag> | Tag | #registry
+docker push <repo>:<tag> | Push | #registry
+docker rmi <image> | Remove image | #cleanup
+docker history <image> | Show layers | #inspect
+
+## Volumes & Networks
+docker volume ls | List volumes | #volume
+docker volume create <name> | Create volume | #volume
+docker run -v <name>:/data <image> | Mount volume | docker run -v $(pwd):/app node:22 bind-mounts the current dir | #volume #run
+docker network ls | List networks | #network
+docker network create <name> | Create network | #network
+docker network connect <network> <container> | Attach container | #network
+
+## Compose
+docker compose up -d | Up (detached) | docker compose up -d --build rebuilds images first | #compose
+docker compose down | Down | docker compose down -v also removes volumes | #compose
+docker compose ps | List services | #compose #list
+docker compose logs -f <service> | Follow service logs | #compose #logs
+docker compose exec <service> sh | Shell into service | #compose #exec
+docker compose restart <service> | Restart service | #compose #lifecycle
+
+## Cleanup
+docker system df | Disk usage | #cleanup #monitor
+docker container prune | Remove stopped containers | #cleanup
+docker image prune -a | Remove unused images | #cleanup
+docker system prune | Remove all unused | docker system prune -a --volumes is the aggressive version | #cleanup

@@ -26,6 +26,9 @@ Panel {
   readonly property var modeColors: ({ N: "#a6e3a1", I: "#ffca55", V: "#ff9e64", C: "#25ffdb" })
 
   property var tools: []
+  property var warnings: []       // problems found while parsing guide files
+  readonly property string bundledDir: Qt.resolvedUrl("guides").toString().replace("file://", "")
+  readonly property string userDir: (Quickshell.env("XDG_CONFIG_HOME") || (Quickshell.env("HOME") + "/.config")) + "/qrg/guides"
   property var rows: []
   property var results: []
   property var display: []        // results with section header rows interleaved
@@ -87,17 +90,40 @@ Panel {
     close()
   }
 
-  onOpenedChanged: if (opened) { filterText = ""; selectedIndex = 0; rebuild() }
+  function reloadGuides() {
+    if (!loader.running) loader.running = true
+  }
 
-  FileView {
-    path: Qt.resolvedUrl("qrg.json").toString().replace("file://", "")
-    watchChanges: true
-    onFileChanged: reload()
-    onLoaded: {
-      root.tools = QrgSearch.parse(text())
-      root.rows = QrgSearch.flatten(root.tools)
-      root.rebuild()
-    }
+  function applyGuides(text) {
+    var res = QrgSearch.parseBundle(text)
+    tools = res.tools
+    warnings = res.warnings
+    rows = QrgSearch.flatten(tools)
+    if (toolId && !tools.some(function(t) { return t.id === toolId })) toolId = ""
+    rebuild()
+  }
+
+  // Creates ~/.config/qrg/guides/<name>.txt from a template (unless it exists) and opens it in the editor.
+  function newGuide(name) {
+    var id = String(name || "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "")
+    if (!id) return
+    var title = id.charAt(0).toUpperCase() + id.slice(1)
+    Quickshell.execDetached(["sh", "-c",
+      'mkdir -p "$1" && { [ -e "$2" ] || printf "# %s\\nShort description\\n\\n## Section\\nkeys | what it does | optional example | #tag\\n// Lines starting with // are comments. Put [N V] before the keys to show modes.\\n" "$3" > "$2"; }; omarchy-launch-editor "$2"',
+      "sh", userDir, userDir + "/" + id + ".txt", title])
+  }
+
+  onOpenedChanged: if (opened) { filterText = ""; selectedIndex = 0; reloadGuides(); rebuild() }
+  Component.onCompleted: reloadGuides()
+
+  // Bundled guides first, then the user's: a user file with the same name replaces the bundled guide.
+  Process {
+    id: loader
+    command: ["sh", "-c",
+      'for f in "$1"/*.txt "$2"/*.txt; do [ -f "$f" ] && { printf "\\n@@FILE %s\\n" "$f"; cat "$f"; }; done',
+      "sh", root.bundledDir, root.userDir]
+    stdout: StdioCollector { id: loaderOut; waitForEnd: true }
+    onExited: root.applyGuides(loaderOut.text)
   }
 
   KeyboardPanel {
@@ -195,6 +221,17 @@ Panel {
             }
           }
         }
+      }
+
+      Text {
+        visible: root.warnings.length > 0
+        width: parent.width
+        text: "\u26a0 " + (root.warnings[0] || "") + (root.warnings.length > 1 ? "  (+" + (root.warnings.length - 1) + " more)" : "")
+        textFormat: Text.PlainText
+        color: Color.urgent
+        font.family: root.fontFamily
+        font.pixelSize: Style.font.caption
+        elide: Text.ElideRight
       }
 
       ListView {

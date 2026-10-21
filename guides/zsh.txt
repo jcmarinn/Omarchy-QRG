@@ -1,0 +1,52 @@
+# Zsh
+Line-editor shortcuts, history, globbing and expansion.
+
+## Line Editing
+Ctrl-a / Ctrl-e | Line start / end | #move
+Alt-b / Alt-f | Word ← / → | #move #word
+Ctrl-u | Delete → line start | #delete
+Ctrl-k | Delete → line end | #delete
+Ctrl-w | Delete word ← | #delete #word
+Ctrl-y | Paste deleted | #paste
+Ctrl-l | Clear screen | #screen
+Ctrl-x Ctrl-e | Edit in $EDITOR | #editor
+
+## History
+Ctrl-r | Search history | #history #search
+!! | Repeat last cmd | sudo !! reruns it with sudo | #history
+!$ | Last arg | mkdir foo && cd !$ | #history
+!<string> | Last cmd starting with… | !git | #history
+Alt-. | Last arg (cycle) | #history
+history -E 1 | History + timestamps | #history
+fc -e - old=new | Rerun with substitution | fc -e - foo=bar | #history
+
+## Globbing
+**/*.js | Recursive glob | #glob
+*(.) | Files only | #glob #qualifier
+*(/) | Dirs only | #glob #qualifier
+*(om[1,5]) | 5 newest | ls *(om[1,5]) | #glob #qualifier
+*~*.txt | Exclude pattern | #glob #exclude
+file<1-10> | Numeric range | ls file<1-10>.log | #glob
+
+## Expansion
+{a,b,c} | Brace expand | cp file.{txt,bak} | #expansion
+{1..5} | Number range | #expansion
+$(cmd) | Command output | #expansion
+<(cmd) | Output as file | diff <(ls a) <(ls b) | #expansion
+${var:-default} | Default if unset | #expansion #variable
+${var##*/} | Strip prefix | ${path##*/} gives the basename | #expansion #variable
+${(U)var} | Uppercase | #expansion #variable
+
+## Directories
+cd - | Previous dir | #navigate
+dirs -v | Dir stack | #navigate #stack
+cd ~2 | Jump to stack entry | #navigate #stack
+setopt AUTO_CD | cd by name only | #navigate #option
+setopt AUTO_PUSHD | cd pushes stack | #navigate #option
+
+## Aliases & Functions
+alias ll='ls -lah' | Define alias | #alias
+alias -g G='| grep' | Global alias | ps aux G zsh | #alias
+which <cmd> | Show resolution | #inspect
+functions <name> | Show function | #inspect #function
+source ~/.zshrc | Reload config | #config

@@ -1,66 +1,69 @@
-# QRG — Quick Reference Guide
+# Omarchy-QRG — Quick Reference Guide for Omarchy
 
-A locally-run cheat sheet collection for the tools I use (Neovim, Docker, Zsh, Git, …), searchable from two front-ends over the same data:
+A bar button for [Omarchy](https://omarchy.org) that opens a searchable cheat-sheet panel. Ships with guides for **Neovim, Docker, Zsh and Git**, and you can add your own as plain text files.
 
-- **Web page** — dark, mono, card layout with search, per-guide tabs and a click-for-details dialog. Colors follow the active [Omarchy](https://omarchy.org) theme.
-- **Omarchy bar plugin** — a bar button that opens a keyboard-driven search panel; Enter copies the selected keys/command.
+- Type to filter across all guides, **Tab** / **Shift-Tab** to switch guide, **↑ / ↓** to move, **Enter** (or click) to copy the keys/command, **Esc** to clear / close.
+- Hover a row for its example.
+- Colors follow your Omarchy theme.
 
-## How it works
-
-```
-data/*.yml  ──npm run build──▶  qrg.json  ──▶  web page
- (hand-edited)  (validates)                └──▶  Omarchy plugin
-```
-
-Each tool is one YAML file in `data/`; the build validates it and emits `qrg.json`. There is no database and nothing to register — a new file becomes a new tab in both front-ends.
-
-## Adding a guide
-
-Create `data/<id>.yml` (the file name must equal `id`):
-
-```yaml
-id: git
-name: Git
-description: optional one-liner
-sections:
-  - name: Branches
-    entries:
-      - { keys: "git switch -c <name>", desc: "New branch + switch", example: "optional", tags: [branch] }
-      # modal tools can add: mode: [N, V]   (N / I / V / C)
-```
-
-Unknown fields are rejected, so typos fail the build instead of silently disappearing.
-
-## Setup
-
-Requires Node (developed on Node 26).
+## Install
 
 ```sh
-npm install && (cd web && npm install)
-git config core.hooksPath .githooks   # validate + rebuild on commit/pull
-npm run build                         # data/*.yml -> qrg.json
-cd web && npx astro dev               # web page at http://localhost:4321
-```
-
-To keep the web page running in the background, install the user service:
-
-```sh
-systemctl --user enable --now "$PWD/systemd/qrg-web.service"
-```
-
-### Omarchy plugin
-
-Link it into your plugins folder, then enable it and restart the shell:
-
-```sh
-ln -s "$PWD/plugin/jcmarin.qrg" ~/.config/omarchy/plugins/jcmarin.qrg
-omarchy plugin enable jcmarin.qrg
+omarchy plugin add https://github.com/jcmarinn/Omarchy-QRG.git --enable
 omarchy-restart-shell
 ```
 
-Open it from the bar, or bind `omarchy-shell qrg toggle` to a key. Type to filter, **Tab** cycles guides, **↑/↓** move, **Enter** copies, **Esc** clears/closes.
+Open it from the new book icon in the bar, or bind a key to `omarchy-shell qrg toggle`. Requires `wl-copy` (`wl-clipboard`, included with Omarchy). Update with `omarchy plugin update jcmarin.qrg`.
 
-> The plugin and its setup are specific to Omarchy (Hyprland + Quickshell). The data and web page work anywhere Node runs.
+## Add your own guide
+
+Run:
+
+```sh
+omarchy-shell qrg newGuide tmux
+```
+
+That creates `~/.config/qrg/guides/tmux.txt` from a template and opens it in your editor. Guides are plain text — one file per tool, the file name is the guide's id:
+
+```
+# Tmux
+Terminal multiplexer
+
+## Sessions
+tmux new -s <name>      | New session
+tmux attach -t <name>   | Attach           | tmux a -t work works too | #session
+
+## Panes
+[N] Ctrl-b %            | Split │
+```
+
+| Part | Meaning |
+|------|---------|
+| `# Name` | Guide title (optional; defaults to the file name) |
+| line after the title | One-line description (optional) |
+| `## Title` | Starts a section |
+| `keys \| description` | An entry — both required |
+| third field | Example, shown in the hover tooltip |
+| `#word #word` | Search tags (as the last field) |
+| `[N V]` before the keys | Mode badges for modal tools (`N` `I` `V` `C`) |
+| `// text` | Comment |
+
+Save the file and reopen the panel — no restart or build step. If a line is malformed, the panel shows a warning with the file and line number and skips just that line.
+
+A file in `~/.config/qrg/guides/` with the same name as a bundled guide (say `git.txt`) **replaces** it, so you can customise the built-ins too. Your guides are outside the plugin folder, so `omarchy plugin update` never touches them.
+
+Want a guide included for everyone? Open a pull request adding it to `guides/`.
+
+## Development
+
+```sh
+node --test tests/parser.test.mjs     # parser + search tests
+omarchy plugin validate .             # manifest check
+```
+
+If you symlink a working copy into `~/.config/omarchy/plugins/jcmarin.qrg`, QML edits are not hot-reloaded — run `omarchy-restart-shell`.
+
+There is also a web version of the same guides: [QRG-web](https://github.com/jcmarinn/QRG-web).
 
 ## License
 

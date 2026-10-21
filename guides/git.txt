@@ -1,0 +1,63 @@
+# Git
+Everyday Git commands.
+
+## Setup
+git init | New repo | #create
+git clone <url> | Clone repo | #create #remote
+git config --global user.name "Name" | Set name | Also user.email; drop --global for this repo only | #config
+git config --list | Show config | #config
+
+## Basics
+git status | Show changes | #status
+git add <file> | Stage file | git add -p stages hunk by hunk | #stage
+git add -A | Stage all | #stage
+git commit -m "msg" | Commit staged | #commit
+git commit -am "msg" | Stage tracked + commit | #commit #stage
+git commit --amend | Edit last commit | git commit --amend --no-edit keeps the message | #commit #undo
+git diff | Unstaged changes | #diff
+git diff --staged | Staged changes | #diff #stage
+git rm <file> | Delete + stage | #delete
+git mv <old> <new> | Rename + stage | #move
+
+## Branches
+git branch | List branches | git branch -a includes remotes | #list
+git switch <branch> | Switch branch | #switch
+git switch -c <branch> | New branch + switch | #create #switch
+git merge <branch> | Merge → current | #merge
+git rebase <branch> | Replay on top of | #rebase
+git rebase -i HEAD~3 | Edit last 3 commits | Squash, reword, reorder or drop commits | #rebase #history
+git branch -d <branch> | Delete branch | -D forces deletion of an unmerged branch | #delete
+git cherry-pick <commit> | Apply one commit | #commit
+
+## Remotes
+git remote -v | List remotes | #remote
+git fetch | Download, no merge | #remote
+git pull | Fetch + merge | git pull --rebase rebases instead of merging | #remote
+git push | Upload commits | #remote
+git push -u origin <branch> | Push + track | #remote #create
+git push --force-with-lease | Safer force push | #remote #undo
+git remote add origin <url> | Add remote | #remote #create
+
+## History
+git log --oneline --graph | Compact graph | Add --all to include every branch | #log
+git log -p <file> | File history + diffs | #log #file
+git show <commit> | Show commit | #log
+git blame <file> | Who changed each line | #log #file
+git log -S"text" | Find commits adding text | #log #search
+git bisect start | Binary-search a bug | Then git bisect good / bad until it names the commit | #debug
+
+## Undo
+git restore <file> | Discard changes | #undo
+git restore --staged <file> | Unstage | #undo #stage
+git reset --soft HEAD~1 | Undo commit, keep staged | #undo #commit
+git reset --hard HEAD~1 | Undo commit, drop changes | Destructive: uncommitted work is lost | #undo #commit
+git revert <commit> | Undo via new commit | #undo #commit
+git reflog | Recover lost commits | Find the hash, then git switch -c rescue <hash> | #undo #log
+git clean -fd | Delete untracked | #undo #delete
+
+## Stash & Tags
+git stash | Shelve changes | git stash -u also shelves untracked files | #stash
+git stash pop | Restore + drop | #stash
+git stash list | List stashes | #stash
+git tag <name> | Tag commit | git tag -a v1.0 -m "msg" makes an annotated tag | #tag
+git push --tags | Push tags | #tag #remote

@@ -56,6 +56,8 @@ BarWidget {
         function show(): void { root.open() }
         function hide(): void { root.close() }
         function toggle(): void { root.togglePanel() }
+        // `omarchy-shell qrg newGuide <name>` scaffolds ~/.config/qrg/guides/<name>.txt and opens it.
+        function newGuide(name: string): void { if (root.panelItem) root.panelItem.newGuide(name) }
     }
 
     BarIconButton {
