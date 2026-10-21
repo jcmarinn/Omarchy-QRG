@@ -24,7 +24,7 @@ sections:
       - { keys: "o / O", mode: [N], desc: "New line ↓ / ↑", tags: [insert, line] }
       - { keys: "x", mode: [N, V], desc: "Delete char", tags: [delete] }
       - { keys: "dd", mode: [N], desc: "Delete line", tags: [delete, line] }
-      - { keys: "yy", mode: [N], desc: "Yank line", tags: [yank, line] }
+      - { keys: "yy", mode: [N], desc: "Copy line", tags: [yank, copy, line] }
       - { keys: "p / P", mode: [N], desc: "Paste ↓ / ↑", tags: [paste] }
       - { keys: "cw", mode: [N], desc: "Change word", tags: [change, word] }
       - { keys: "ciw", mode: [N], desc: "Change inner word", example: "ci\" changes the text inside quotes", tags: [change, textobject] }
@@ -33,7 +33,7 @@ sections:
       - { keys: ".", mode: [N], desc: "Repeat change", tags: [repeat] }
       - { keys: ">> / <<", mode: [N], desc: "Indent / Unindent", tags: [indent] }
       - { keys: "Ctrl-w", mode: [I, C], desc: "Delete word ←", tags: [delete, word] }
-      - { keys: "Ctrl-r {reg}", mode: [I, C], desc: "Insert register", example: "Ctrl-r 0 pastes the last yank", tags: [register, paste] }
+      - { keys: "Ctrl-r {reg}", mode: [I, C], desc: "Insert register", example: "Ctrl-r 0 pastes the last copy", tags: [register, paste] }
   - name: Visual
     entries:
       - { keys: "v", mode: [N], desc: "Visual (char)", tags: [visual] }
@@ -63,5 +63,5 @@ sections:
     entries:
       - { keys: "q{reg}", mode: [N], desc: "Record macro", example: "qa ... q records into a", tags: [macro] }
       - { keys: "@{reg}", mode: [N], desc: "Play macro", example: "@a, then @@ to repeat; 10@a runs it 10 times", tags: [macro] }
-      - { keys: "\"{reg}y", mode: [N, V], desc: "Yank → register", example: "\"ayy yanks the line into register a", tags: [register, yank] }
-      - { keys: "\"+y", mode: [N, V], desc: "Yank → clipboard", tags: [register, clipboard] }
+      - { keys: "\"{reg}y", mode: [N, V], desc: "Copy → register", example: "\"ayy copies the line into register a", tags: [register, yank, copy] }
+      - { keys: "\"+y", mode: [N, V], desc: "Copy → clipboard", tags: [register, yank, copy, clipboard] }
