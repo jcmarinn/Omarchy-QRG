@@ -71,7 +71,7 @@
   .mode.N { background: var(--N); } .mode.I { background: var(--I); }
   .mode.V { background: var(--V); } .mode.C { background: var(--C); }
 
-  #out { columns: 380px 4; column-gap: 16px; max-width: 1600px; margin: 24px auto 0; }
+  #out { columns: max(380px, calc((var(--keys-ch, 14) + 24) * 1ch + 96px)) 4; column-gap: 16px; max-width: 1600px; margin: 24px auto 0; }
   section { break-inside: avoid; margin-bottom: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
   h2 {
     display: flex; justify-content: space-between; align-items: baseline; margin: 0; padding: 10px 14px;
@@ -85,7 +85,7 @@
   section:nth-of-type(6n+6) h2 { color: var(--t6); }
   h2 small { text-transform: none; letter-spacing: 0; color: var(--soft); font-weight: 400; }
   .row {
-    display: grid; grid-template-columns: minmax(90px, 42%) 1fr auto; gap: 12px; align-items: baseline;
+    display: grid; grid-template-columns: minmax(0, calc(var(--keys-ch, 14) * 1ch)) 1fr auto; gap: 12px; align-items: baseline;
     width: 100%; padding: 7px 14px; background: none; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
     color: inherit; font: inherit; text-align: left; cursor: pointer;
   }
@@ -151,6 +151,10 @@
   function render() {
     const terms = q.value.toLowerCase().split(/\s+/).filter(Boolean);
     const shown = data.filter((t) => !active || t.id === active);
+    // Size the key column to the guide: long commands (docker) get wider cards, short keys (nvim) stay compact.
+    const lens = shown.flatMap((t) => t.sections.flatMap((s) => s.entries.map((e) => e.keys.length))).sort((a, b) => a - b);
+    const pct = lens[Math.min(lens.length - 1, Math.floor(lens.length * (active ? 0.97 : 0.75)))] ?? 14;
+    out.style.setProperty("--keys-ch", String(Math.max(12, Math.min(pct + 2, 40))));
     let n = 0;
     let html = "";
     shownEntries.length = 0;

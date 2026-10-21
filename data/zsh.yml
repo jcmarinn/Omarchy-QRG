@@ -4,51 +4,51 @@ description: Line-editor shortcuts, history, globbing and expansion.
 sections:
   - name: Line Editing
     entries:
-      - { keys: "Ctrl-a / Ctrl-e", desc: "Move to start / end of line", tags: [move] }
-      - { keys: "Alt-b / Alt-f", desc: "Move back / forward one word", tags: [move, word] }
-      - { keys: "Ctrl-u", desc: "Delete from cursor to start of line", tags: [delete] }
-      - { keys: "Ctrl-k", desc: "Delete from cursor to end of line", tags: [delete] }
-      - { keys: "Ctrl-w", desc: "Delete the previous word", tags: [delete, word] }
-      - { keys: "Ctrl-y", desc: "Paste what was last deleted", tags: [paste] }
-      - { keys: "Ctrl-l", desc: "Clear the screen", tags: [screen] }
-      - { keys: "Ctrl-x Ctrl-e", desc: "Edit the current command line in $EDITOR", tags: [editor] }
+      - { keys: "Ctrl-a / Ctrl-e", desc: "Line start / end", tags: [move] }
+      - { keys: "Alt-b / Alt-f", desc: "Word ← / →", tags: [move, word] }
+      - { keys: "Ctrl-u", desc: "Delete → line start", tags: [delete] }
+      - { keys: "Ctrl-k", desc: "Delete → line end", tags: [delete] }
+      - { keys: "Ctrl-w", desc: "Delete word ←", tags: [delete, word] }
+      - { keys: "Ctrl-y", desc: "Paste deleted", tags: [paste] }
+      - { keys: "Ctrl-l", desc: "Clear screen", tags: [screen] }
+      - { keys: "Ctrl-x Ctrl-e", desc: "Edit in $EDITOR", tags: [editor] }
   - name: History
     entries:
-      - { keys: "Ctrl-r", desc: "Reverse incremental search through history", tags: [history, search] }
-      - { keys: "!!", desc: "Repeat the last command", example: "sudo !! reruns it with sudo", tags: [history] }
-      - { keys: "!$", desc: "Last argument of the previous command", example: "mkdir foo && cd !$", tags: [history] }
-      - { keys: "!<string>", desc: "Run the most recent command starting with string", example: "!git", tags: [history] }
-      - { keys: "Alt-.", desc: "Insert the last argument of the previous command (repeat to cycle)", tags: [history] }
-      - { keys: "history -E 1", desc: "List history with timestamps", tags: [history] }
-      - { keys: "fc -e - old=new", desc: "Rerun the last command with a substitution", example: "fc -e - foo=bar", tags: [history] }
+      - { keys: "Ctrl-r", desc: "Search history", tags: [history, search] }
+      - { keys: "!!", desc: "Repeat last cmd", example: "sudo !! reruns it with sudo", tags: [history] }
+      - { keys: "!$", desc: "Last arg", example: "mkdir foo && cd !$", tags: [history] }
+      - { keys: "!<string>", desc: "Last cmd starting with…", example: "!git", tags: [history] }
+      - { keys: "Alt-.", desc: "Last arg (cycle)", tags: [history] }
+      - { keys: "history -E 1", desc: "History + timestamps", tags: [history] }
+      - { keys: "fc -e - old=new", desc: "Rerun with substitution", example: "fc -e - foo=bar", tags: [history] }
   - name: Globbing
     entries:
-      - { keys: "**/*.js", desc: "Recursive glob across subdirectories", tags: [glob] }
-      - { keys: "*(.)", desc: "Match only regular files", tags: [glob, qualifier] }
-      - { keys: "*(/)", desc: "Match only directories", tags: [glob, qualifier] }
-      - { keys: "*(om[1,5])", desc: "Five most recently modified matches", example: "ls *(om[1,5])", tags: [glob, qualifier] }
-      - { keys: "*~*.txt", desc: "Match everything except .txt files", tags: [glob, exclude] }
-      - { keys: "file<1-10>", desc: "Match a numeric range", example: "ls file<1-10>.log", tags: [glob] }
+      - { keys: "**/*.js", desc: "Recursive glob", tags: [glob] }
+      - { keys: "*(.)", desc: "Files only", tags: [glob, qualifier] }
+      - { keys: "*(/)", desc: "Dirs only", tags: [glob, qualifier] }
+      - { keys: "*(om[1,5])", desc: "5 newest", example: "ls *(om[1,5])", tags: [glob, qualifier] }
+      - { keys: "*~*.txt", desc: "Exclude pattern", tags: [glob, exclude] }
+      - { keys: "file<1-10>", desc: "Numeric range", example: "ls file<1-10>.log", tags: [glob] }
   - name: Expansion
     entries:
-      - { keys: "{a,b,c}", desc: "Brace expansion", example: "cp file.{txt,bak}", tags: [expansion] }
-      - { keys: "{1..5}", desc: "Numeric range expansion", tags: [expansion] }
-      - { keys: "$(cmd)", desc: "Command substitution", tags: [expansion] }
-      - { keys: "<(cmd)", desc: "Process substitution: treat command output as a file", example: "diff <(ls a) <(ls b)", tags: [expansion] }
-      - { keys: "${var:-default}", desc: "Use default if var is unset or empty", tags: [expansion, variable] }
-      - { keys: "${var##*/}", desc: "Strip the longest prefix matching the pattern", example: "${path##*/} gives the basename", tags: [expansion, variable] }
-      - { keys: "${(U)var}", desc: "Uppercase the value (also (L) for lowercase)", tags: [expansion, variable] }
+      - { keys: "{a,b,c}", desc: "Brace expand", example: "cp file.{txt,bak}", tags: [expansion] }
+      - { keys: "{1..5}", desc: "Number range", tags: [expansion] }
+      - { keys: "$(cmd)", desc: "Command output", tags: [expansion] }
+      - { keys: "<(cmd)", desc: "Output as file", example: "diff <(ls a) <(ls b)", tags: [expansion] }
+      - { keys: "${var:-default}", desc: "Default if unset", tags: [expansion, variable] }
+      - { keys: "${var##*/}", desc: "Strip prefix", example: "${path##*/} gives the basename", tags: [expansion, variable] }
+      - { keys: "${(U)var}", desc: "Uppercase", tags: [expansion, variable] }
   - name: Directories
     entries:
-      - { keys: "cd -", desc: "Go back to the previous directory", tags: [navigate] }
-      - { keys: "dirs -v", desc: "Show the directory stack with indexes", tags: [navigate, stack] }
-      - { keys: "cd ~2", desc: "Jump to entry 2 of the directory stack (needs AUTO_PUSHD)", tags: [navigate, stack] }
-      - { keys: "setopt AUTO_CD", desc: "Type a directory name alone to cd into it", tags: [navigate, option] }
-      - { keys: "setopt AUTO_PUSHD", desc: "Make cd push the old directory onto the stack", tags: [navigate, option] }
+      - { keys: "cd -", desc: "Previous dir", tags: [navigate] }
+      - { keys: "dirs -v", desc: "Dir stack", tags: [navigate, stack] }
+      - { keys: "cd ~2", desc: "Jump to stack entry", tags: [navigate, stack] }
+      - { keys: "setopt AUTO_CD", desc: "cd by name only", tags: [navigate, option] }
+      - { keys: "setopt AUTO_PUSHD", desc: "cd pushes stack", tags: [navigate, option] }
   - name: Aliases & Functions
     entries:
-      - { keys: "alias ll='ls -lah'", desc: "Define an alias", tags: [alias] }
-      - { keys: "alias -g G='| grep'", desc: "Define a global alias, expanded anywhere on the line", example: "ps aux G zsh", tags: [alias] }
-      - { keys: "which <cmd>", desc: "Show how a command resolves (alias, function or path)", tags: [inspect] }
-      - { keys: "functions <name>", desc: "Print the definition of a function", tags: [inspect, function] }
-      - { keys: "source ~/.zshrc", desc: "Reload the zsh configuration", tags: [config] }
+      - { keys: "alias ll='ls -lah'", desc: "Define alias", tags: [alias] }
+      - { keys: "alias -g G='| grep'", desc: "Global alias", example: "ps aux G zsh", tags: [alias] }
+      - { keys: "which <cmd>", desc: "Show resolution", tags: [inspect] }
+      - { keys: "functions <name>", desc: "Show function", tags: [inspect, function] }
+      - { keys: "source ~/.zshrc", desc: "Reload config", tags: [config] }
