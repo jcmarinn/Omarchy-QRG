@@ -224,15 +224,32 @@ Panel {
         }
       }
 
-      // Centered, and the item is a little shorter than its content to pull the list closer.
+      // Centered legend between two thin rules. The rules sit inside the column's
+      // gap (negative offsets) so the whole band takes as little height as possible.
       Item {
+        id: legendBand
         visible: root.legend.length > 0
         width: parent.width
-        height: legendRow.implicitHeight - Style.space(4)
+        height: legendRow.implicitHeight + Style.space(4)
+
+        Rectangle {
+          y: -Style.space(3)
+          width: parent.width
+          height: 1
+          color: Util.alpha(root.fg, 0.18)
+        }
+
+        Rectangle {
+          y: legendBand.height + Style.space(2)
+          width: parent.width
+          height: 1
+          color: Util.alpha(root.fg, 0.18)
+        }
 
         Row {
           id: legendRow
           anchors.horizontalCenter: parent.horizontalCenter
+          anchors.verticalCenter: parent.verticalCenter
           spacing: Style.space(16)
 
           Repeater {
@@ -300,7 +317,7 @@ Panel {
           readonly property bool current: !isHeader && index === root.selectedIndex
 
           width: ListView.view.width
-          height: isHeader ? headerText.implicitHeight + Style.space(14) : rowColumn.implicitHeight + Style.space(10)
+          height: isHeader ? headerText.implicitHeight + Style.space(index === 0 ? 8 : 14) : rowColumn.implicitHeight + Style.space(10)
           radius: Style.cornerRadius
           color: current ? root.selectedBg : (!isHeader && modelData.stripe ? Util.alpha(root.fg, 0.045) : "transparent")
 
