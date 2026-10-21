@@ -127,11 +127,13 @@ function parseBundle(raw) {
   return { tools: tools, warnings: warnings }
 }
 
-// Legend for the guide(s) in scope: the marks actually used by entries that the
-// guide(s) named with "@legend". Same letter named differently in two guides
-// shows both names. Unnamed marks only appear as badges, not in the legend.
+// Legend for one guide: the marks actually used by its entries that it named
+// with "@legend". Unnamed marks only appear as badges, not in the legend. There
+// is no legend without a selected guide, since a letter can mean different
+// things in different guides.
 function legendFor(tools, toolId) {
-  var scope = tools.filter(function(t) { return !toolId || t.id === toolId })
+  if (!toolId) return []
+  var scope = tools.filter(function(t) { return t.id === toolId })
   var used = {}
   scope.forEach(function(t) {
     t.sections.forEach(function(s) {

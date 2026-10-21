@@ -224,42 +224,49 @@ Panel {
         }
       }
 
-      Flow {
+      // Centered, and the item is a little shorter than its content to pull the list closer.
+      Item {
         visible: root.legend.length > 0
         width: parent.width
-        spacing: Style.space(14)
+        height: legendRow.implicitHeight - Style.space(4)
 
-        Repeater {
-          model: root.legend
-          delegate: Row {
-            id: legendItem
-            required property var modelData
-            spacing: Style.space(5)
+        Row {
+          id: legendRow
+          anchors.horizontalCenter: parent.horizontalCenter
+          spacing: Style.space(16)
 
-            Rectangle {
-              width: Style.space(16)
-              height: Style.space(16)
-              radius: Style.space(3)
-              color: QrgSearch.markColor(legendItem.modelData.mark)
+          Repeater {
+            model: root.legend
+            delegate: Row {
+              id: legendItem
+              required property var modelData
+              spacing: Style.space(5)
+
+              Rectangle {
+                width: Style.space(16)
+                height: Style.space(16)
+                radius: Style.space(3)
+                color: QrgSearch.markColor(legendItem.modelData.mark)
+
+                Text {
+                  anchors.centerIn: parent
+                  text: legendItem.modelData.mark
+                  color: Color.background
+                  font.family: root.fontFamily
+                  font.pixelSize: Style.font.caption
+                  font.bold: true
+                }
+              }
 
               Text {
-                anchors.centerIn: parent
-                text: legendItem.modelData.mark
-                color: Color.background
+                anchors.verticalCenter: parent.verticalCenter
+                text: legendItem.modelData.label
+                textFormat: Text.PlainText
+                color: root.fg
+                opacity: 0.7
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.caption
-                font.bold: true
               }
-            }
-
-            Text {
-              anchors.verticalCenter: parent.verticalCenter
-              text: legendItem.modelData.label
-              textFormat: Text.PlainText
-              color: root.fg
-              opacity: 0.7
-              font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
             }
           }
         }

@@ -79,12 +79,12 @@ test("@legend names the letters; bad definitions warn", () => {
   assert.match(warnings[0], /^t\.txt:2 bad legend definition 'oops'/);
 });
 
-test("the legend lists only used, named marks for the selected guide", () => {
+test("the legend lists only used, named marks, and only for a selected guide", () => {
   const a = parseGuide("@legend N=Normal, V=Visual, X=Unused\n## S\n[N V] k | d\n[Z] z | no name\n", "a").tool;
   const b = parseGuide("@legend N=Nav\n## S\n[N] k | d\n", "b").tool;
   assert.deepEqual(legendFor([a, b], "a"), [{ mark: "N", label: "Normal" }, { mark: "V", label: "Visual" }]);
   assert.deepEqual(legendFor([a, b], "b"), [{ mark: "N", label: "Nav" }]);
-  assert.deepEqual(legendFor([a, b], ""), [{ mark: "N", label: "Normal / Nav" }, { mark: "V", label: "Visual" }]);
+  assert.deepEqual(legendFor([a, b], ""), []);
 });
 
 test("markColor keeps N/I/V/C fixed and is stable for other letters", () => {

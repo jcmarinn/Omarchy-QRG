@@ -34,16 +34,22 @@ That creates `~/.config/qrg/guides/tmux.txt` from a template and opens it in you
 ```
 # Tmux
 Terminal multiplexer
+@legend S=Session, W=Window, P=Pane
 
 ## Sessions
-tmux new -s <name>      | New session
-tmux attach -t <name>   | Attach           | tmux a -t work works too | #session
-
-@legend T=Tab, P=Pane
+[S] tmux new -s <name>      | New session
+[S] tmux attach -t <name>   | Attach        | tmux a -t work works too | #session
 
 ## Panes
-[P] Ctrl-b %            | Split │
+[P] Ctrl-b %                | Split │
+[W P] Ctrl-b z              | Zoom pane     | #zoom
 ```
+
+### Marks and the legend
+
+A **mark** is a small letter badge shown at the right of an entry. Put one or more before the keys — `[P]`, `[W P]` — using any single letters you like. They work for anything you want to tag at a glance: editor modes (the built-in Neovim guide marks `N` `I` `V` `C`), which tmux object a command acts on, which tool a command belongs to, and so on.
+
+An optional **`@legend`** line gives the letters names, as `X=Name` pairs separated by commas. When you select a guide's tab, the panel shows a legend of the named marks that guide actually uses. Unnamed letters still get a badge, just no legend entry, and there's no legend on the **All** tab (a letter can mean different things in different guides). Letters keep a fixed color, so a mark looks the same everywhere.
 
 | Part | Meaning |
 |------|---------|
@@ -53,8 +59,8 @@ tmux attach -t <name>   | Attach           | tmux a -t work works too | #session
 | `keys \| description` | An entry — both required |
 | third field | Example, shown in the hover tooltip |
 | `#word #word` | Search tags (as the last field) |
-| `[T P]` before the keys | Marks (badges) on the entry — any single letters, e.g. editor modes or tmux panes (the built-in Neovim guide uses `N` `I` `V` `C`) |
-| `@legend T=Tab, P=Pane` | Optional: names the mark letters. The panel shows a legend of the named marks the selected guide uses. Unnamed letters still get a badge, just no legend entry |
+| `[S W]` before the keys | Marks (badges) on the entry — any single letters |
+| `@legend S=Session, P=Pane` | Optional: names the mark letters for the legend (see above) |
 | `// text` | Comment |
 
 Save the file and reopen the panel — no restart or build step. If a line is malformed, the panel shows a warning with the file and line number and skips just that line.
