@@ -16,6 +16,6 @@
     "description": "Search cheat sheets and copy keys/commands",
     "category": "Tools",
     "allowMultiple": false,
-    "defaultSection": "right"
+    "defaultSection": "left"
   }
 }
