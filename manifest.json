@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "jcmarin.qrg",
   "name": "Quick Reference Guide",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "author": "jcmarin",
   "description": "Searchable cheat sheets (nvim, docker, zsh, git, ...) in a bar panel; add your own guides as plain text files",
   "kinds": [
