@@ -224,23 +224,26 @@ Panel {
         }
       }
 
-      // Centered legend between two thin rules. The rules sit inside the column's
-      // gap (negative offsets) so the whole band takes as little height as possible.
+      // Centered legend between two thin rules. Spacing (in Style.space units, the column
+      // adds another 8 above and below the band): the top rule sits 1 above the band so
+      // there is ~7 between the chips and the rule; the row is 3 below the top rule and
+      // 3 above the bottom rule; the band ends 4 above the bottom rule, leaving ~4 plus
+      // the section title's own leading between that rule and the list.
       Item {
         id: legendBand
         visible: root.legend.length > 0
         width: parent.width
-        height: legendRow.implicitHeight + Style.space(4)
+        height: legendRow.implicitHeight + Style.space(1)
 
         Rectangle {
-          y: -Style.space(3)
+          y: -Style.space(1)
           width: parent.width
           height: 1
           color: Util.alpha(root.fg, 0.18)
         }
 
         Rectangle {
-          y: legendBand.height + Style.space(2)
+          y: legendBand.height + Style.space(4)
           width: parent.width
           height: 1
           color: Util.alpha(root.fg, 0.18)
@@ -248,8 +251,8 @@ Panel {
 
         Row {
           id: legendRow
+          y: Style.space(2)
           anchors.horizontalCenter: parent.horizontalCenter
-          anchors.verticalCenter: parent.verticalCenter
           spacing: Style.space(16)
 
           Repeater {
@@ -317,7 +320,7 @@ Panel {
           readonly property bool current: !isHeader && index === root.selectedIndex
 
           width: ListView.view.width
-          height: isHeader ? headerText.implicitHeight + Style.space(index === 0 ? 8 : 14) : rowColumn.implicitHeight + Style.space(10)
+          height: isHeader ? headerText.implicitHeight + Style.space(index === 0 ? 3 : 14) : rowColumn.implicitHeight + Style.space(10)
           radius: Style.cornerRadius
           color: current ? root.selectedBg : (!isHeader && modelData.stripe ? Util.alpha(root.fg, 0.045) : "transparent")
 
