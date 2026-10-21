@@ -4,7 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Status
 
-QRG (quick reference guide) is a **new project** — only scaffolding exists so far. There are no build/lint/test commands yet; add them here as they are created.
+QRG (quick reference guide). **Phase 1 (data layer) is done**: YAML schema, starter guides (nvim, docker, zsh) and the build script. **Web front-end is a first draft** (`web/`, single Astro page, client-side search, themed from the active Omarchy theme via the generated `web/public/theme.css`; run with `cd web && npm install && npx astro dev`). `plugin/` is not started.
+
+## Commands
+
+- `npm install` once, then `npm run build` — validates `data/*.yml` and writes `dist/qrg.json` plus copies in `web/public/` and `plugin/jcmarin.qrg/` (all gitignored). Exits non-zero listing every schema error. No tests/lint yet.
+
+## Adding a guide
+
+Drop `data/<id>.yml` in place (file name must equal `id`, lowercase/digits/hyphens) and run the build — no registration anywhere else. Shape:
+
+```yaml
+id: git
+name: Git
+description: optional one-liner
+sections:
+  - name: Branches
+    entries:
+      - { keys: "git switch -c <name>", desc: "Create and switch", example: "optional", tags: [branch] }
+      # mode is only for modal tools: mode: [N, V]  (N/I/V/C)
+```
+
+Unknown fields are rejected (catches typos). In `qrg.json`, `mode` is always an array (empty when not modal) and `tags` always an array.
 
 ## Goal
 

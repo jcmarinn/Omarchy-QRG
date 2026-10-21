@@ -3,3 +3,6 @@ dist/
 .astro/
 *.log
 .DS_Store
+plugin/jcmarin.qrg/qrg.json
+web/public/qrg.json
+web/public/theme.css

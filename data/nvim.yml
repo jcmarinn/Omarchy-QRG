@@ -1,0 +1,67 @@
+id: nvim
+name: Neovim
+description: Modal editing keys and commands.
+sections:
+  - name: Motions
+    entries:
+      - { keys: "h j k l", mode: [N, V], desc: "Move left / down / up / right", tags: [move] }
+      - { keys: "w", mode: [N, V], desc: "Jump to start of next word", tags: [move, word] }
+      - { keys: "b", mode: [N, V], desc: "Jump to start of previous word", tags: [move, word] }
+      - { keys: "e", mode: [N, V], desc: "Jump to end of word", tags: [move, word] }
+      - { keys: "0", mode: [N, V], desc: "Jump to start of line", tags: [move, line] }
+      - { keys: "^", mode: [N, V], desc: "Jump to first non-blank character of line", tags: [move, line] }
+      - { keys: "$", mode: [N, V], desc: "Jump to end of line", tags: [move, line] }
+      - { keys: "gg", mode: [N, V], desc: "Go to first line of file", tags: [move, file] }
+      - { keys: "G", mode: [N, V], desc: "Go to last line of file", example: "42G goes to line 42", tags: [move, file] }
+      - { keys: "%", mode: [N, V], desc: "Jump to matching bracket", tags: [move, bracket] }
+      - { keys: "{ }", mode: [N, V], desc: "Jump to previous / next paragraph", tags: [move] }
+      - { keys: "f{char}", mode: [N, V], desc: "Jump to next occurrence of char on the line", example: "fx jumps to the next x; ; repeats", tags: [move, find] }
+      - { keys: "Ctrl-d / Ctrl-u", mode: [N, V], desc: "Scroll half a page down / up", tags: [scroll] }
+  - name: Editing
+    entries:
+      - { keys: "i / a", mode: [N], desc: "Insert before / after the cursor", tags: [insert] }
+      - { keys: "I / A", mode: [N], desc: "Insert at start / end of line", tags: [insert] }
+      - { keys: "o / O", mode: [N], desc: "Open a new line below / above", tags: [insert, line] }
+      - { keys: "x", mode: [N, V], desc: "Delete character under cursor", tags: [delete] }
+      - { keys: "dd", mode: [N], desc: "Delete the current line", tags: [delete, line] }
+      - { keys: "yy", mode: [N], desc: "Yank (copy) the current line", tags: [yank, line] }
+      - { keys: "p / P", mode: [N], desc: "Paste after / before the cursor", tags: [paste] }
+      - { keys: "cw", mode: [N], desc: "Change word (delete and enter insert mode)", tags: [change, word] }
+      - { keys: "ciw", mode: [N], desc: "Change the whole word under the cursor", example: "ci\" changes the text inside quotes", tags: [change, textobject] }
+      - { keys: "u", mode: [N], desc: "Undo", tags: [undo] }
+      - { keys: "Ctrl-r", mode: [N], desc: "Redo", tags: [undo] }
+      - { keys: ".", mode: [N], desc: "Repeat the last change", tags: [repeat] }
+      - { keys: ">> / <<", mode: [N], desc: "Indent / unindent line", tags: [indent] }
+      - { keys: "Ctrl-w", mode: [I, C], desc: "Delete the previous word", tags: [delete, word] }
+      - { keys: "Ctrl-r {reg}", mode: [I, C], desc: "Insert contents of a register", example: "Ctrl-r 0 pastes the last yank", tags: [register, paste] }
+  - name: Visual
+    entries:
+      - { keys: "v", mode: [N], desc: "Start characterwise visual mode", tags: [visual] }
+      - { keys: "V", mode: [N], desc: "Start linewise visual mode", tags: [visual] }
+      - { keys: "Ctrl-v", mode: [N], desc: "Start blockwise visual mode", example: "Ctrl-v, select lines, I, type, Esc inserts on every line", tags: [visual, block] }
+      - { keys: "o", mode: [V], desc: "Jump to the other end of the selection", tags: [visual] }
+      - { keys: "gv", mode: [N], desc: "Reselect the last visual selection", tags: [visual] }
+  - name: Search & Replace
+    entries:
+      - { keys: "/pattern", mode: [N], desc: "Search forward", tags: [search] }
+      - { keys: "?pattern", mode: [N], desc: "Search backward", tags: [search] }
+      - { keys: "n / N", mode: [N], desc: "Next / previous search match", tags: [search] }
+      - { keys: "*", mode: [N], desc: "Search for the word under the cursor", tags: [search] }
+      - { keys: ":%s/old/new/g", mode: [C], desc: "Replace all occurrences in the file", example: ":%s/foo/bar/gc confirms each replacement", tags: [replace] }
+      - { keys: ":noh", mode: [C], desc: "Clear search highlighting", tags: [search] }
+  - name: Files & Windows
+    entries:
+      - { keys: ":w", mode: [C], desc: "Save the file", tags: [file] }
+      - { keys: ":q", mode: [C], desc: "Quit the window", tags: [file] }
+      - { keys: ":wq", mode: [C], desc: "Save and quit", tags: [file] }
+      - { keys: ":q!", mode: [C], desc: "Quit without saving", tags: [file] }
+      - { keys: ":e {file}", mode: [C], desc: "Open a file", tags: [file] }
+      - { keys: ":sp / :vsp", mode: [C], desc: "Split window horizontally / vertically", tags: [window] }
+      - { keys: "Ctrl-w h/j/k/l", mode: [N], desc: "Move focus to the window in that direction", tags: [window] }
+      - { keys: ":bn / :bp", mode: [C], desc: "Next / previous buffer", tags: [buffer] }
+  - name: Macros & Registers
+    entries:
+      - { keys: "q{reg}", mode: [N], desc: "Start / stop recording a macro into a register", example: "qa ... q records into a", tags: [macro] }
+      - { keys: "@{reg}", mode: [N], desc: "Play back a macro", example: "@a, then @@ to repeat; 10@a runs it 10 times", tags: [macro] }
+      - { keys: "\"{reg}y", mode: [N, V], desc: "Yank into a named register", example: "\"ayy yanks the line into register a", tags: [register, yank] }
+      - { keys: "\"+y", mode: [N, V], desc: "Yank to the system clipboard", tags: [register, clipboard] }
