@@ -36,7 +36,9 @@ Only `keys | description` are required; `[N V]` modes are N/I/V/C; a field made 
 
 - `node --test tests/parser.test.mjs` — run the tests (no dependencies, no build step).
 - `omarchy plugin validate .` — check the manifest.
-- `omarchy-restart-shell` — needed to pick up QML changes when the plugin is symlinked into `~/.config/omarchy/plugins/` (symlinked plugins are not hot-reloaded). Plain data changes in `guides/` or the user folder are picked up the next time the panel opens.
+- **Running copy:** the plugin the shell runs is a real clone installed with `omarchy plugin add https://github.com/jcmarinn/Omarchy-QRG.git --enable`, in `~/.config/omarchy/plugins/jcmarin.qrg` — not a symlink to this checkout. To try a change: commit and push, then `omarchy plugin update jcmarin.qrg` (the shell hot-reloads the installed folder; no restart). Quick experiments can also be edited directly in the installed clone, but copy them back here and commit.
+- If you ever symlink this checkout into `~/.config/omarchy/plugins/` instead (`omarchy plugin remove` the clone first — the installer refuses a duplicate id), symlinked plugins are **not** hot-reloaded: run `omarchy-restart-shell` after QML changes.
+- Plain data changes in `guides/` or `~/.config/qrg/guides/` are picked up the next time the panel opens.
 
 ## Conventions
 
