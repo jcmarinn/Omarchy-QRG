@@ -1,0 +1,3 @@
+#!/bin/sh
+# Validate the guides (and refresh qrg.json) before every commit; a schema error blocks the commit.
+exec "$(dirname "$0")/build.sh"

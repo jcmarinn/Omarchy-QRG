@@ -9,6 +9,7 @@ QRG (quick reference guide). **Phase 1 (data layer) is done**: YAML schema, star
 ## Commands
 
 - `npm install` once, then `npm run build` — validates `data/*.yml` and writes `dist/qrg.json` plus copies in `web/public/` and `plugin/jcmarin.qrg/` (all gitignored). Exits non-zero listing every schema error. No tests/lint yet.
+- Git hooks live in `.githooks/` (versioned). After a fresh clone run `git config core.hooksPath .githooks`. `pre-commit` runs the build, so an invalid guide blocks the commit; `post-merge` and branch `post-checkout` rebuild so pulled guides show up. Hooks fire on git events, not on file save — run `npm run build` by hand after editing YAML outside a commit.
 
 ## Adding a guide
 

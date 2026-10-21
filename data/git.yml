@@ -1,0 +1,65 @@
+id: git
+name: Git
+description: Everyday Git commands.
+sections:
+  - name: Setup
+    entries:
+      - { keys: "git init", desc: "New repo", tags: [create] }
+      - { keys: "git clone <url>", desc: "Clone repo", tags: [create, remote] }
+      - { keys: "git config --global user.name \"Name\"", desc: "Set name", example: "Also user.email; drop --global for this repo only", tags: [config] }
+      - { keys: "git config --list", desc: "Show config", tags: [config] }
+  - name: Basics
+    entries:
+      - { keys: "git status", desc: "Show changes", tags: [status] }
+      - { keys: "git add <file>", desc: "Stage file", example: "git add -p stages hunk by hunk", tags: [stage] }
+      - { keys: "git add -A", desc: "Stage all", tags: [stage] }
+      - { keys: "git commit -m \"msg\"", desc: "Commit staged", tags: [commit] }
+      - { keys: "git commit -am \"msg\"", desc: "Stage tracked + commit", tags: [commit, stage] }
+      - { keys: "git commit --amend", desc: "Edit last commit", example: "git commit --amend --no-edit keeps the message", tags: [commit, undo] }
+      - { keys: "git diff", desc: "Unstaged changes", tags: [diff] }
+      - { keys: "git diff --staged", desc: "Staged changes", tags: [diff, stage] }
+      - { keys: "git rm <file>", desc: "Delete + stage", tags: [delete] }
+      - { keys: "git mv <old> <new>", desc: "Rename + stage", tags: [move] }
+  - name: Branches
+    entries:
+      - { keys: "git branch", desc: "List branches", example: "git branch -a includes remotes", tags: [list] }
+      - { keys: "git switch <branch>", desc: "Switch branch", tags: [switch] }
+      - { keys: "git switch -c <branch>", desc: "New branch + switch", tags: [create, switch] }
+      - { keys: "git merge <branch>", desc: "Merge → current", tags: [merge] }
+      - { keys: "git rebase <branch>", desc: "Replay on top of", tags: [rebase] }
+      - { keys: "git rebase -i HEAD~3", desc: "Edit last 3 commits", example: "Squash, reword, reorder or drop commits", tags: [rebase, history] }
+      - { keys: "git branch -d <branch>", desc: "Delete branch", example: "-D forces deletion of an unmerged branch", tags: [delete] }
+      - { keys: "git cherry-pick <commit>", desc: "Apply one commit", tags: [commit] }
+  - name: Remotes
+    entries:
+      - { keys: "git remote -v", desc: "List remotes", tags: [remote] }
+      - { keys: "git fetch", desc: "Download, no merge", tags: [remote] }
+      - { keys: "git pull", desc: "Fetch + merge", example: "git pull --rebase rebases instead of merging", tags: [remote] }
+      - { keys: "git push", desc: "Upload commits", tags: [remote] }
+      - { keys: "git push -u origin <branch>", desc: "Push + track", tags: [remote, create] }
+      - { keys: "git push --force-with-lease", desc: "Safer force push", tags: [remote, undo] }
+      - { keys: "git remote add origin <url>", desc: "Add remote", tags: [remote, create] }
+  - name: History
+    entries:
+      - { keys: "git log --oneline --graph", desc: "Compact graph", example: "Add --all to include every branch", tags: [log] }
+      - { keys: "git log -p <file>", desc: "File history + diffs", tags: [log, file] }
+      - { keys: "git show <commit>", desc: "Show commit", tags: [log] }
+      - { keys: "git blame <file>", desc: "Who changed each line", tags: [log, file] }
+      - { keys: "git log -S\"text\"", desc: "Find commits adding text", tags: [log, search] }
+      - { keys: "git bisect start", desc: "Binary-search a bug", example: "Then git bisect good / bad until it names the commit", tags: [debug] }
+  - name: Undo
+    entries:
+      - { keys: "git restore <file>", desc: "Discard changes", tags: [undo] }
+      - { keys: "git restore --staged <file>", desc: "Unstage", tags: [undo, stage] }
+      - { keys: "git reset --soft HEAD~1", desc: "Undo commit, keep staged", tags: [undo, commit] }
+      - { keys: "git reset --hard HEAD~1", desc: "Undo commit, drop changes", example: "Destructive: uncommitted work is lost", tags: [undo, commit] }
+      - { keys: "git revert <commit>", desc: "Undo via new commit", tags: [undo, commit] }
+      - { keys: "git reflog", desc: "Recover lost commits", example: "Find the hash, then git switch -c rescue <hash>", tags: [undo, log] }
+      - { keys: "git clean -fd", desc: "Delete untracked", tags: [undo, delete] }
+  - name: Stash & Tags
+    entries:
+      - { keys: "git stash", desc: "Shelve changes", example: "git stash -u also shelves untracked files", tags: [stash] }
+      - { keys: "git stash pop", desc: "Restore + drop", tags: [stash] }
+      - { keys: "git stash list", desc: "List stashes", tags: [stash] }
+      - { keys: "git tag <name>", desc: "Tag commit", example: "git tag -a v1.0 -m \"msg\" makes an annotated tag", tags: [tag] }
+      - { keys: "git push --tags", desc: "Push tags", tags: [tag, remote] }
